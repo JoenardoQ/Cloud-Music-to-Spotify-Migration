@@ -94,7 +94,8 @@ explicit apply action      -> verified plan -> execution journal
 - `plan` 不创建或修改 Spotify 歌单；`apply` 不重新搜索。
 - Spotify 写入使用当前 `POST /me/playlists` 和 `/playlists/{id}/items`，单批不超过
   100 项。
-- 任意源歌曲缺失详情时不执行迁移。
+- 任意源歌曲缺失详情时默认不执行迁移；用户明确选择残缺迁移后，缺失项保留原位置并
+  进入手动报告，且绝不发送到 Spotify 搜索或写入。
 - 计划校验和可检测任何执行相关字段篡改。
 - CSV 报告包含每个源索引、源信息、状态、分项评分、前三候选和原因。
 - `manual.csv` 只包含被跳过歌曲，足以支持用户在 Spotify 中手动添加。

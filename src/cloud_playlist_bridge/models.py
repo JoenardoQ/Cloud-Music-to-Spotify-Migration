@@ -19,6 +19,14 @@ class SourceTrack:
 
 
 @dataclass(frozen=True, slots=True)
+class MissingSourceTrack:
+    source_id: str
+    title: str | None = None
+    artists: tuple[str, ...] = ()
+    release_date: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class SourcePlaylist:
     source_id: str
     name: str
@@ -27,6 +35,7 @@ class SourcePlaylist:
     declared_count: int
     tracks: tuple[SourceTrack, ...]
     missing_source_ids: tuple[str, ...] = ()
+    missing_tracks: tuple[MissingSourceTrack, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

@@ -74,6 +74,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     plan.add_argument("--threshold", type=_probability, default=0.82)
     plan.add_argument("--ambiguity-gap", type=_probability, default=0.05)
+    plan.add_argument(
+        "--allow-incomplete-source",
+        action="store_true",
+        help="明确跳过网易云缺少详情的歌曲，并将其写入手动报告",
+    )
 
     apply = subparsers.add_parser("apply", help="执行或恢复一个已固定的迁移计划")
     apply.add_argument("plan_file", type=Path, help="plan 命令生成的 .plan.json")
@@ -128,6 +133,7 @@ def run_plan(args: argparse.Namespace) -> int:
             source,
             threshold=args.threshold,
             ambiguity_gap=args.ambiguity_gap,
+            allow_incomplete_source=args.allow_incomplete_source,
             store=store,
             progress=show_progress,
         )

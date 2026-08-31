@@ -12,7 +12,15 @@ from cloud_playlist_bridge.execution import PlanExecutor
 from cloud_playlist_bridge.jobs import JobStore
 from cloud_playlist_bridge.matching import assess_candidate
 from cloud_playlist_bridge.migration import MigrationService
-from cloud_playlist_bridge.models import MatchResult, MigrationPlan, SourcePlaylist, SourceTrack, SpotifyTrack
+from cloud_playlist_bridge.models import (
+    MatchResult,
+    MigrationPlan,
+    MissingSourceTrack,
+    SourcePlaylist,
+    SourceTrack,
+    SpotifyTrack,
+)
+from cloud_playlist_bridge.plans import write_plan_bundle
 
 
 def playlist(count=205, missing=(), *, identical=False):
@@ -105,9 +113,48 @@ class PlanningTests(unittest.TestCase):
 
     def test_missing_source_details_stop_before_search(self):
         spotify = FakeSpotify()
-        with self.assertRaises(SourceIncompleteError):
-            MigrationService(spotify).build_plan(playlist(1, missing=("9",)))
+        source = playlist(1, missing=("9",))
+        source = SourcePlaylist(
+            source.source_id,
+            source.name,
+            source.description,
+            source.cover_url,
+            source.declared_count,
+            source.tracks,
+            source.missing_source_ids,
+            (MissingSourceTrack("9", "Lost Song", ("Artist",), "2020-01-01"),),
+        )
+        with self.assertRaisesRegex(
+            SourceIncompleteError,
+            "歌曲：Lost Song；歌手：Artist；发布时间：2020-01-01；ID：9",
+        ):
+            MigrationService(spotify).build_plan(source)
         self.assertEqual(spotify.search_calls, 0)
+
+    def test_explicit_incomplete_migration_skips_missing_track(self):
+        spotify = FakeSpotify()
+        missing = SourceTrack(2, "9", "Lost Song", ("Artist",), "", None)
+        source = SourcePlaylist(
+            "42",
+            "Source",
+            "",
+            None,
+            2,
+            (SourceTrack(1, "1", "Song 1", ("Artist",), "Album", 200000), missing),
+            ("9",),
+            (MissingSourceTrack("9", "Lost Song", ("Artist",), "2020-01-01"),),
+        )
+        plan = MigrationService(spotify).build_plan(
+            source, allow_incomplete_source=True
+        )
+        self.assertEqual(
+            [item.status for item in plan.results], ["matched", "not_found"]
+        )
+        self.assertEqual(spotify.search_calls, 1)
+        self.assertIn("允许跳过", plan.results[1].reason)
+        with tempfile.TemporaryDirectory() as directory:
+            files = write_plan_bundle(plan, Path(directory))
+            self.assertIn("Lost Song", files.manual.read_text(encoding="utf-8-sig"))
 
     def test_identical_queries_are_cached_and_exact_matches_stop_early(self):
         with tempfile.TemporaryDirectory() as directory:

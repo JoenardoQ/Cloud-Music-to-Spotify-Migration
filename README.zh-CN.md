@@ -74,6 +74,10 @@ cloud-playlist-bridge app
 4. 查看已匹配和已跳过数量；歧义歌曲保持跳过。
 5. 点击“创建 Spotify 歌单”，才会发生外部写入。
 
+若网易云未返回部分歌曲详情，App 默认停止并列出可获得的歌曲名、歌手、发布时间和
+ID。用户可以明确选择“允许残缺迁移”；缺失歌曲只进入手动报告，不会搜索或写入
+Spotify。
+
 页面使用虚拟列表显示大歌单。关闭页面不会损坏检查点；重新启动 App 并分析相同歌单
 即可恢复已保存的匹配进度。报告写入 `reports/`，状态写入 `.state/`。
 
@@ -181,6 +185,7 @@ cloud-playlist-bridge apply reports/NAME.plan.json \
 
 可用 `SPOTIFY_CLIENT_ID` 和 `NETEASE_API_BASE_URL` 环境变量代替对应参数。Spotify
 令牌默认保存在 `.state/spotify-token.json`；不要提交或分享该文件。
+CLI 用户可在 `plan` 命令添加 `--allow-incomplete-source` 明确允许跳过缺失歌曲。
 
 ## 匹配策略与大歌单
 

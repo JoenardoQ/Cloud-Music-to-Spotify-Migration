@@ -83,6 +83,11 @@ The command binds only to `127.0.0.1` and opens
 4. Inspect matched and skipped counts. Ambiguous tracks remain skipped.
 5. Select **Create Spotify playlist** to perform the external write.
 
+If NetEase omits some track details, the app stops by default and lists every
+available title, artist, release date, and ID. The user may explicitly allow an
+incomplete migration; missing tracks go only to the manual report and are never
+searched or written to Spotify.
+
 The page renders large playlists with virtualized lists. Closing the page does
 not corrupt a checkpoint; start the app and analyze the same playlist again to
 resume saved matching work. Reports are written to `reports/` and state to
@@ -199,6 +204,8 @@ cloud-playlist-bridge apply reports/NAME.plan.json \
 `SPOTIFY_CLIENT_ID` and `NETEASE_API_BASE_URL` can replace the corresponding
 arguments. Spotify tokens default to `.state/spotify-token.json`; do not commit
 or share that file.
+CLI users can add `--allow-incomplete-source` to `plan` to explicitly skip
+missing source tracks.
 
 ## Matching and large playlists
 

@@ -53,6 +53,31 @@ class NetEaseClientTests(unittest.TestCase):
         with self.assertRaises(RemoteApiError):
             NetEaseClient(request_json=self.fake_request).fetch_playlist("42", expected_count=3)
 
+    def test_missing_song_keeps_playlist_summary_for_diagnostics(self):
+        def request(request, _timeout):
+            if "playlist/detail" in request.full_url:
+                return {
+                    "playlist": {
+                        "name": "missing",
+                        "trackCount": 1,
+                        "trackIds": [{"id": 9}],
+                        "tracks": [{
+                            "id": 9,
+                            "name": "Lost Song",
+                            "ar": [{"name": "A"}],
+                            "publishTime": 1577836800000,
+                        }],
+                    }
+                }
+            return {"songs": []}
+
+        playlist = NetEaseClient(request_json=request).fetch_playlist("42")
+        missing = playlist.missing_tracks[0]
+        self.assertEqual(
+            (missing.title, missing.artists, missing.release_date),
+            ("Lost Song", ("A",), "2020-01-01"),
+        )
+
     def test_enhanced_api_uses_documented_http_routes(self):
         requests = []
 

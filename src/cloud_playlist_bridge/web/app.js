@@ -194,6 +194,7 @@ form.addEventListener("submit", async (event) => {
       threshold: $("#threshold").value,
       ambiguity_gap: $("#ambiguity-gap").value,
       private: $("#private-playlist").checked,
+      allow_incomplete_source: $("#allow-incomplete-source").checked,
     });
   } catch (error) {
     showNotice(error.message || String(error));

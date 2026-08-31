@@ -11,7 +11,7 @@ from urllib.parse import urlencode, urlparse, parse_qs
 from urllib.request import Request, urlopen
 
 from .errors import InputError, RemoteApiError
-from .models import SourcePlaylist, SourceTrack
+from .models import MissingSourceTrack, SourcePlaylist, SourceTrack
 
 
 NETEASE_BASE_URL = "https://music.163.com"
@@ -159,10 +159,39 @@ class NetEaseClient:
                     by_id[str(song["id"])] = song
 
         missing = tuple(item for item in track_ids if item not in by_id)
+        playlist_tracks = playlist.get("tracks")
+        summary_by_id = (
+            {
+                str(item["id"]): item
+                for item in playlist_tracks
+                if isinstance(item, dict) and "id" in item
+            }
+            if isinstance(playlist_tracks, list)
+            else {}
+        )
+        missing_tracks = tuple(
+            _missing_track(track_id, summary_by_id.get(track_id)) for track_id in missing
+        )
+        missing_by_id = {item.source_id: item for item in missing_tracks}
         tracks: list[SourceTrack] = []
         for position, track_id in enumerate(track_ids, start=1):
             song = by_id.get(track_id)
             if song is None:
+                diagnostic = missing_by_id[track_id]
+                tracks.append(
+                    SourceTrack(
+                        position=position,
+                        source_id=track_id,
+                        title=diagnostic.title or f"未知歌曲 {track_id}",
+                        artists=diagnostic.artists,
+                        album="",
+                        release_year=(
+                            int(diagnostic.release_date[:4])
+                            if diagnostic.release_date
+                            else None
+                        ),
+                    )
+                )
                 continue
             raw_artists = song.get("ar") or []
             if not isinstance(raw_artists, list):
@@ -196,6 +225,7 @@ class NetEaseClient:
             declared_count=declared_count,
             tracks=tuple(tracks),
             missing_source_ids=missing,
+            missing_tracks=missing_tracks,
         )
 
 
@@ -206,3 +236,27 @@ def _release_year(value: object) -> int | None:
         return None
     current_year = datetime.now(timezone.utc).year
     return year if 1900 <= year <= current_year + 1 else None
+
+
+def _missing_track(source_id: str, song: dict[str, Any] | None) -> MissingSourceTrack:
+    if not song:
+        return MissingSourceTrack(source_id)
+    raw_artists = song.get("ar")
+    artists = tuple(
+        str(artist.get("name", "")).strip()
+        for artist in raw_artists
+        if isinstance(artist, dict) and artist.get("name")
+    ) if isinstance(raw_artists, list) else ()
+    release_date = None
+    try:
+        release_date = datetime.fromtimestamp(
+            int(song.get("publishTime")) / 1000, tz=timezone.utc
+        ).date().isoformat()
+    except (TypeError, ValueError, OSError, OverflowError):
+        pass
+    return MissingSourceTrack(
+        source_id=source_id,
+        title=str(song.get("name") or "").strip() or None,
+        artists=artists,
+        release_date=release_date,
+    )

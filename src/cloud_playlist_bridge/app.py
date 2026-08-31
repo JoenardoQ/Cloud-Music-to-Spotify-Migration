@@ -104,6 +104,7 @@ class AppController:
         playlist = str(payload.get("playlist") or "").strip()
         client_id = str(payload.get("spotify_client_id") or "").strip()
         api_base_url = str(payload.get("netease_api_base_url") or "").strip()
+        allow_incomplete_source = bool(payload.get("allow_incomplete_source"))
         if not playlist:
             raise InputError("请输入网易云歌单 ID 或分享 URL")
         if not client_id:
@@ -178,6 +179,7 @@ class AppController:
                         source,
                         threshold=threshold,
                         ambiguity_gap=ambiguity_gap,
+                        allow_incomplete_source=allow_incomplete_source,
                         store=store,
                         progress=progress,
                     )

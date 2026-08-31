@@ -30,72 +30,51 @@ information in your playlist to Spotify.
 4. This extracted folder is your separate trial area. Complete every later step
    in this folder. You can download it again if something goes wrong.
 
-## Step 2: Install Python
+## Step 2: Install Python, the environment, and the app
 
 ### Windows
 
-1. Open the [Python downloads page for Windows](https://www.python.org/downloads/windows/).
-2. Download and install Python 3.11 or later.
-3. Select **Add python.exe to PATH** if the installer shows that option.
+1. Open the [Python downloads page for Windows](https://www.python.org/downloads/windows/)
+   and install Python 3.11 or later. Select **Add python.exe to PATH** if shown.
+2. Open the extracted project folder in File Explorer.
+3. Select the address bar, type `cmd`, and press Enter.
+4. Run these lines one at a time in the black CMD window:
 
-### macOS
-
-Open the [Python downloads page for macOS](https://www.python.org/downloads/macos/),
-then download and install Python 3.11 or later.
-
-### Ubuntu
-
-Open Terminal, copy this line, and press Enter:
-
-```bash
-sudo apt update && sudo apt install -y python3 python3-venv
-```
-
-If the computer asks for a password, enter your login password and press Enter.
-It is normal for no characters to appear while you type the password.
-
-## Step 3: Open a terminal in the project folder
-
-### Windows
-
-1. Open the extracted project folder in File Explorer.
-2. Select the address bar at the top, type `powershell`, and press Enter.
-3. Keep the blue or black window open.
-
-### macOS
-
-1. Open the Terminal application.
-2. Type `cd `, including the space after `cd`.
-3. Drag the extracted project folder into the Terminal window and press Enter.
-
-### Ubuntu
-
-Right-click an empty area inside the extracted project folder and select
-**Open in Terminal**.
-
-## Step 4: Install the app
-
-Copy only the two lines for your system. Press Enter after each line and wait
-for it to finish.
-
-### Windows
-
-```powershell
+```bat
 py -3 -m venv .venv
 .venv\Scripts\python.exe -m pip install .
 ```
 
-### macOS or Ubuntu
+### macOS
+
+1. Open the [Python downloads page for macOS](https://www.python.org/downloads/macos/)
+   and install Python 3.11 or later.
+2. Open Terminal, type `cd `, drag the project folder into Terminal, and press Enter.
+3. Run these lines one at a time:
 
 ```bash
 python3 -m venv .venv
 ./.venv/bin/python -m pip install .
 ```
 
+### Ubuntu
+
+1. Right-click inside the project folder and select **Open in Terminal**.
+2. Run these lines one at a time:
+
+```bash
+sudo apt update && sudo apt install -y python3 python3-venv
+python3 -m venv .venv
+./.venv/bin/python -m pip install .
+```
+
+If the computer asks for a password, enter your login password and press Enter.
+It is normal for no characters to appear while you type the password.
+
 `Successfully installed cloud-playlist-bridge-0.5.0` means installation worked.
 A pip upgrade notice is harmless and can be ignored.
 
-## Step 5: Get a Spotify Client ID
+## Step 3: Get a Spotify Client ID
 
 1. Open the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
 2. Sign in with your Spotify Premium account.
@@ -116,13 +95,13 @@ Do not copy, enter, or share the Client Secret. This project does not need it.
 Spotify requires an exact Redirect URI match. Do not replace `127.0.0.1` with
 `localhost`, and do not omit `/callback`.
 
-## Step 6: Start the app
+## Step 4: Start the app
 
 Return to the terminal you kept open and copy the command for your system.
 
 ### Windows
 
-```powershell
+```bat
 .venv\Scripts\python.exe -m cloud_playlist_bridge app --no-browser
 ```
 
@@ -137,13 +116,13 @@ Keep the terminal open, then select or enter this address in your browser:
 
 [http://127.0.0.1:8765/](http://127.0.0.1:8765/)
 
-## Step 7: Move the playlist
+## Step 5: Move the playlist
 
 The app currently displays Chinese labels. `分析歌单` means **Analyze playlist**,
 and `创建 Spotify 歌单` means **Create Spotify playlist**.
 
 1. Paste the NetEase playlist share link or playlist ID into the NetEase field.
-2. Paste the Client ID from Step 5 into the Spotify Client ID field.
+2. Paste the Client ID from Step 3 into the Spotify Client ID field.
 3. Leave the `api-enhanced` address empty for now.
 4. Select `分析歌单`.
 5. When the Spotify authorization page opens, sign in and approve access.
@@ -160,7 +139,7 @@ Return to the terminal running the app and press `Ctrl+C`. You can close the
 terminal after it reports that the app stopped.
 
 You do not need to install again next time. Open a terminal in the same project
-folder and repeat Step 6.
+folder and repeat Step 4.
 
 ## Common errors
 
@@ -172,7 +151,7 @@ different port.
 
 Windows:
 
-```powershell
+```bat
 .venv\Scripts\python.exe -m cloud_playlist_bridge app --no-browser --port 8766
 ```
 

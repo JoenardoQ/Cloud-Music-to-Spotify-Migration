@@ -1,6 +1,8 @@
 # Cloud Playlist Bridge
 
-[简体中文](README.zh-CN.md)
+[简体中文](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/README.zh-CN.md)
+
+[Beginner guide](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/BEGINNER_GUIDE.md)
 
 Cloud Playlist Bridge migrates playlist metadata that you can access from
 NetEase Cloud Music to Spotify. It does not download audio, bypass membership
@@ -35,7 +37,7 @@ ChatGPT, an agent, a plugin, or an MCP service.
 ## Install on Ubuntu
 
 ```bash
-cd '/home/joenardo/My Projects/CloudMusic_to_Spotify_Migration'
+cd '/path/to/CloudMusic_to_Spotify_Migration'
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .

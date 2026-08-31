@@ -1,6 +1,8 @@
 # Cloud Playlist Bridge
 
-[English](README.md)
+[English](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/README.md)
+
+[小猪专供傻瓜式教学](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/小猪专供傻瓜式教学.md)
 
 Cloud Playlist Bridge 将用户有权访问的网易云音乐歌单元数据迁移到 Spotify。它不下载
 音频、不破解会员内容，也不绕过地区或版权限制。
@@ -28,7 +30,7 @@ Cloud Playlist Bridge 将用户有权访问的网易云音乐歌单元数据迁�
 ## 在 Ubuntu 安装
 
 ```bash
-cd '/home/joenardo/My Projects/CloudMusic_to_Spotify_Migration'
+cd '/path/to/CloudMusic_to_Spotify_Migration'
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .

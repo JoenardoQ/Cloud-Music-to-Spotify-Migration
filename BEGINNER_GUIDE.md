@@ -2,213 +2,212 @@
 
 [简体中文](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/小猪专供傻瓜式教学.md)
 
-This guide is for first-time Cloud Playlist Bridge users. Its goal is to move
-your own NetEase Cloud Music playlist to Spotify without experimenting inside
-the primary development checkout.
+This guide is for people who do not know programming, Git, or command-line
+tools. You only need to know how to download a file, copy a command, and open a
+web page. Follow every step in order.
 
-## Remember three things
+## What you need
 
-1. Install and run in a separate lab directory, not the checkout used to
-   maintain the source code.
-2. `plan` only analyzes and creates a plan. Only `apply`, or **Create Spotify
-   playlist** in the app, writes to Spotify.
-3. Never share `.state/spotify-token.json`, credentials other than the Spotify
-   Client ID, or cookies. This project does not need a Spotify Client Secret.
+Prepare:
 
-## Step 1: Prepare Spotify
+- a Windows, macOS, or Ubuntu computer;
+- Python 3.11 or later;
+- a Spotify Premium account;
+- a publicly accessible NetEase Cloud Music playlist.
 
-1. Confirm that your Spotify account meets the current Developer app
-   requirements.
-2. Create a Spotify Developer app with Web API enabled.
-3. Add this Redirect URI exactly:
+Matching a large playlist can take a long time.
+
+[Spotify Web API](https://developer.spotify.com/documentation/web-api) currently
+requires Premium. This tool does not download music. It only matches the track
+information in your playlist to Spotify.
+
+## Step 1: Download the project ZIP
+
+1. Open the [project download page](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/archive/refs/heads/main.zip).
+2. Your browser downloads a ZIP archive.
+3. Extract it and put the folder somewhere easy to find, such as Downloads or
+   Desktop.
+4. This extracted folder is your separate trial area. Complete every later step
+   in this folder. You can download it again if something goes wrong.
+
+## Step 2: Install Python
+
+### Windows
+
+1. Open the [Python downloads page for Windows](https://www.python.org/downloads/windows/).
+2. Download and install Python 3.11 or later.
+3. Select **Add python.exe to PATH** if the installer shows that option.
+
+### macOS
+
+Open the [Python downloads page for macOS](https://www.python.org/downloads/macos/),
+then download and install Python 3.11 or later.
+
+### Ubuntu
+
+Open Terminal, copy this line, and press Enter:
+
+```bash
+sudo apt update && sudo apt install -y python3 python3-venv
+```
+
+If the computer asks for a password, enter your login password and press Enter.
+It is normal for no characters to appear while you type the password.
+
+## Step 3: Open a terminal in the project folder
+
+### Windows
+
+1. Open the extracted project folder in File Explorer.
+2. Select the address bar at the top, type `powershell`, and press Enter.
+3. Keep the blue or black window open.
+
+### macOS
+
+1. Open the Terminal application.
+2. Type `cd `, including the space after `cd`.
+3. Drag the extracted project folder into the Terminal window and press Enter.
+
+### Ubuntu
+
+Right-click an empty area inside the extracted project folder and select
+**Open in Terminal**.
+
+## Step 4: Install the app
+
+Copy only the two lines for your system. Press Enter after each line and wait
+for it to finish.
+
+### Windows
+
+```powershell
+py -3 -m venv .venv
+.venv\Scripts\python.exe -m pip install .
+```
+
+### macOS or Ubuntu
+
+```bash
+python3 -m venv .venv
+./.venv/bin/python -m pip install .
+```
+
+`Successfully installed cloud-playlist-bridge-0.5.0` means installation worked.
+A pip upgrade notice is harmless and can be ignored.
+
+## Step 5: Get a Spotify Client ID
+
+1. Open the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
+2. Sign in with your Spotify Premium account.
+3. Select **Create app**.
+4. For App name, you can enter `Cloud Playlist Bridge`. For Description, you
+   can enter `Personal playlist migration`.
+5. [Spotify requires](https://developer.spotify.com/documentation/web-api/concepts/redirect_uri)
+   this exact Redirect URI:
 
    ```text
    http://127.0.0.1:8888/callback
    ```
 
-4. Copy the Client ID. Do not create, paste, or commit a Client Secret.
+6. Select **Web API**, accept the terms, and create or save the app.
+7. Open the app settings, find **Client ID**, and copy it.
 
-## Step 2: Create a separate lab
+Do not copy, enter, or share the Client Secret. This project does not need it.
+Spotify requires an exact Redirect URI match. Do not replace `127.0.0.1` with
+`localhost`, and do not omit `/callback`.
 
-The safest approach is another clone. Virtual environments, caches, and reports
-created during experiments then remain outside the source-maintenance checkout.
+## Step 6: Start the app
 
-Linux or macOS:
+Return to the terminal you kept open and copy the command for your system.
 
-```bash
-cd ~
-git clone https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration.git CloudPlaylistBridge-Lab
-cd CloudPlaylistBridge-Lab
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-```
-
-Windows PowerShell:
+### Windows
 
 ```powershell
-cd $HOME
-git clone https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration.git CloudPlaylistBridge-Lab
-cd CloudPlaylistBridge-Lab
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e .
+.venv\Scripts\python.exe -m cloud_playlist_bridge app --no-browser
 ```
 
-`Successfully installed cloud-playlist-bridge-0.5.0` means installation
-succeeded. A pip upgrade notice can be ignored; it does not affect migration.
-
-## Step 3A: Use the graphical app
-
-Run this in the activated virtual environment:
+### macOS or Ubuntu
 
 ```bash
-cloud-playlist-bridge app --no-browser
+./.venv/bin/python -m cloud_playlist_bridge app --no-browser
 ```
 
-Keep the terminal open and visit:
+`Cloud Playlist Bridge App: http://127.0.0.1:8765/` means the app started.
+Keep the terminal open, then select or enter this address in your browser:
 
 [http://127.0.0.1:8765/](http://127.0.0.1:8765/)
 
-Use the page in this order:
+## Step 7: Move the playlist
 
-1. Enter the NetEase playlist ID or share URL.
-2. Enter the Spotify Client ID.
-3. Leave the `api-enhanced` address empty unless you already run that service.
-4. Select **Analyze playlist**. Complete Spotify OAuth authorization when
-   prompted the first time.
-5. Review automatic matches, ambiguities, and skipped tracks.
-6. Select **Create Spotify playlist** only after accepting the result. This is
-   the step that writes to Spotify.
+The app currently displays Chinese labels. `分析歌单` means **Analyze playlist**,
+and `创建 Spotify 歌单` means **Create Spotify playlist**.
 
-The terminal must remain running. Return to it and press `Ctrl+C` to stop the
-app.
+1. Paste the NetEase playlist share link or playlist ID into the NetEase field.
+2. Paste the Client ID from Step 5 into the Spotify Client ID field.
+3. Leave the `api-enhanced` address empty for now.
+4. Select `分析歌单`.
+5. When the Spotify authorization page opens, sign in and approve access.
+6. Wait for analysis to finish, then review the matched and skipped counts.
+7. Select `创建 Spotify 歌单` only after you accept the result.
 
-## Step 3B: Use only the command line
+`分析歌单` does not create a Spotify playlist. Only the final create button writes
+to Spotify. Uncertain matches are skipped and saved in a manual CSV instead of
+silently adding the wrong track.
 
-Run the two-stage CLI directly if you do not want the app page.
+## How to stop and start again
 
-On Linux or macOS, create the plan first:
+Return to the terminal running the app and press `Ctrl+C`. You can close the
+terminal after it reports that the app stopped.
 
-```bash
-./.venv/bin/python -m cloud_playlist_bridge plan 'https://music.163.com/playlist?id=123456789' --spotify-client-id YOUR_CLIENT_ID
-```
+You do not need to install again next time. Open a terminal in the same project
+folder and repeat Step 6.
 
-On Windows Command Prompt or PowerShell, create the plan first:
-
-```bat
-.venv\Scripts\python.exe -m cloud_playlist_bridge plan "https://music.163.com/playlist?id=123456789" --spotify-client-id YOUR_CLIENT_ID
-```
-
-The command creates these files under `reports/`:
-
-- `*.plan.json`: the verified, fixed execution plan;
-- `*.csv`: the complete track audit report;
-- `*.manual.csv`: tracks that need manual handling.
-
-Inspect the reports before applying the plan.
-
-Linux or macOS:
-
-```bash
-./.venv/bin/python -m cloud_playlist_bridge apply reports/NAME.plan.json --spotify-client-id YOUR_CLIENT_ID --private
-```
-
-Windows Command Prompt or PowerShell:
-
-```bat
-.venv\Scripts\python.exe -m cloud_playlist_bridge apply reports\NAME.plan.json --spotify-client-id YOUR_CLIENT_ID --private
-```
-
-Replace `NAME` with the actual filename. Removing `--private` creates a public
-playlist.
-
-## Files that belong only to local experiments
-
-The following must not enter a release commit. The project `.gitignore` already
-excludes them:
-
-- `.venv/`: the local Python virtual environment;
-- `.state/`: checkpoints and the Spotify token;
-- `reports/`: migration plans and CSV reports;
-- `dist/`, `build/`, and `*.egg-info/`: build output and installation metadata;
-- `__pycache__/` and `*.pyc`: Python bytecode caches.
-
-Run this before and after work in the maintenance repository:
-
-```bash
-git status --short
-git status --ignored --short
-```
-
-No output from the first command means tracked source files are unchanged. Items
-shown with `!!` by the second command are ignored local files and ordinary
-`git add` will not include them. They can still contain private data and must
-not be shared.
-
-## Common problems
+## Common errors
 
 ### `Address already in use`
 
-Another process holds port `8765`. First check whether the app is already
-running, or use another port:
+Another program is using port `8765`, or the app is already running in another
+terminal. First try opening `http://127.0.0.1:8765/`. If it does not open, use a
+different port.
 
-```bash
-cloud-playlist-bridge app --no-browser --port 8766
+Windows:
+
+```powershell
+.venv\Scripts\python.exe -m cloud_playlist_bridge app --no-browser --port 8766
 ```
 
-Then open `http://127.0.0.1:8766/`. The app page port and Spotify OAuth callback
-port `8888` are different ports.
+macOS or Ubuntu:
+
+```bash
+./.venv/bin/python -m cloud_playlist_bridge app --no-browser --port 8766
+```
+
+Then open `http://127.0.0.1:8766/`.
 
 ### `gio: Operation not supported`
 
-The app is running, but WSL or headless Linux could not open a browser. Use
-`--no-browser`, then open the address printed in the terminal manually.
+This only means the system could not open the browser automatically. The app is
+usually running. Open the address printed in the terminal manually.
 
-### `cloud-playlist-bridge: command not found`
+### `py`, `python3`, or `python` is not found
 
-The virtual environment is inactive, or this terminal uses another environment.
-Bypass the generated command and invoke the module directly:
-
-```bash
-./.venv/bin/python -m cloud_playlist_bridge --help
-```
-
-On Windows:
-
-```bat
-.venv\Scripts\python.exe -m cloud_playlist_bridge --help
-```
-
-### Both `(.venv)` and `(base)` are visible
-
-The Python virtual environment and Conda base prompts are both active. This is
-usually harmless. Confirm that the interpreter belongs to this project's
-`.venv`:
-
-```bash
-python -c "import sys; print(sys.executable)"
-```
+Python was not installed correctly. Repeat Step 2. Close the terminal after
+installation, then open it again.
 
 ### Spotify reports a Redirect URI mismatch
 
-The Developer Dashboard value must match the command character for character:
-`http://127.0.0.1:8888/callback`.
+Return to the Spotify Developer Dashboard and make sure the address is exactly
+`http://127.0.0.1:8888/callback`. Save the setting and try again.
 
-### You want to discard the lab
+### The NetEase playlist cannot be read
 
-First decide whether to preserve migration reports and the manual list, then
-stop the app. Delete only the dedicated `CloudPlaylistBridge-Lab` directory.
-Never run a recursive delete against a home directory, workspace root, or any
-path whose identity is uncertain.
+Check whether the playlist opens in a signed-out browser window. Private,
+owner-only, or login-required playlists cannot be read by the default method.
 
-## Final check
+## Privacy reminder
 
-Before a real migration, confirm that:
-
-- the current directory is the separate `CloudPlaylistBridge-Lab`;
-- the Spotify Redirect URI is registered;
-- the Client ID is correct and no Client Secret is used;
-- you ran `plan` or selected **Analyze playlist** first;
-- you inspected skipped and ambiguous tracks;
-- you run `apply` or select the create button only after accepting the result.
+The `.state` folder contains the Spotify login token. The `reports` folder
+contains playlist reports. Do not send these folders to other people or upload
+them to a public repository or cloud drive. If you stop using the tool, preserve
+any reports you need, stop the app, and then delete the entire separate trial
+folder.

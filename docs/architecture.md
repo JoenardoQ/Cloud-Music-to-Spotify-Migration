@@ -27,13 +27,17 @@ explicit apply action      -> verified plan -> execution journal
 - `plans.py` 是计划序列化、完整性校验、报告和手动名单的唯一所有者。
 - `execution.py` 持有外部写入日志、批次恢复和不确定状态协调。
 - `migration.py` 编排分级搜索，不隐藏配额或源数据失败。
-- `cli.py` 只处理输入和面向人的输出，不包含业务算法。
+- `cli.py` 只处理输入和面向人的输出，不包含业务算法。Linux、Windows 和 macOS 都可
+  通过安装后的命令入口或 `python -m cloud_playlist_bridge` 直接执行 `plan/apply`，无需
+  启动 App 前端。
 - `app.py` 是仅监听回环地址的本地 HTTP 编排层；它在后台线程调用现有服务，并向单页
   前端提供增量状态，不复制匹配或写入算法。
 - `web/` 是无外部资源的单页前端。左右歌曲列表采用窗口化渲染，避免为 10,000 首歌曲
   同时创建 DOM 节点。
-- `launchers.py` 根据运行平台生成 Linux `.desktop` 或 macOS `.app` 启动器；二者调用
-  同一个 Python 模块和浏览器 UI，不分叉迁移逻辑。其他系统仍可直接使用 CLI。
+- `launchers.py` 根据运行平台生成 Linux `.desktop`、Windows 开始菜单 `.vbs` 或
+  macOS `.app` 启动器；三者调用同一个 Python 模块和浏览器 UI，不分叉迁移逻辑。
+  Windows 启动器通过系统自带 Windows Script Host 隐藏控制台窗口，状态与报告写入
+  当前用户的 `%LOCALAPPDATA%`。其他系统仍可直接使用 CLI。
 - 所有模块均为普通 Python 代码，不调用或依赖 Agent、插件或 Codex 运行时。
 
 ## Data flow and invariants
@@ -99,3 +103,7 @@ explicit apply action      -> verified plan -> execution journal
 - 所有凭据路径均默认被版本控制忽略。
 - 单页 App 能加载源歌单、增量显示匹配结果与日志、显示规划/写入进度，并且只有用户
   点击确认写入后才调用 Spotify 创建接口。
+- Linux、Windows 和 macOS 启动器都固定使用安装时的 Python 解释器，并把状态写入
+  对应平台的用户应用数据目录；移动虚拟环境后必须重新安装启动器。
+- Linux、Windows 和 macOS 都能通过模块入口执行 `plan` 和 `apply`；CLI 不依赖本地
+  App 页面，并保持“先生成不可变计划、再明确执行写入”的两阶段边界。

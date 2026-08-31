@@ -41,6 +41,17 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
+## Install on Windows
+
+Install Python 3.11 or later, then run from PowerShell:
+
+```powershell
+cd 'C:\path\to\CloudMusic_to_Spotify_Migration'
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e .
+```
+
 ## Install on macOS
 
 Install Python 3.11 or later first, then run from Terminal:
@@ -92,12 +103,14 @@ cloud-playlist-bridge install-launcher
 ```
 
 - Linux creates `~/.local/share/applications/cloud-playlist-bridge.desktop`.
+- Windows creates `Cloud Playlist Bridge.vbs` in the current user's Start Menu
+  Programs folder and stores state under `%LOCALAPPDATA%\Cloud Playlist Bridge`.
 - macOS creates `~/Applications/Cloud Playlist Bridge.app`.
 
-Both launchers run the same local app and store state under the platform's user
+All launchers run the same local app and store state under the platform's user
 application-data directory. If the virtual environment is moved or recreated,
 run `install-launcher` again. The `app`, `plan`, and `apply` commands remain the
-fallback on both platforms.
+fallback on every platform.
 
 ## NetEase source API choices
 
@@ -123,6 +136,30 @@ docker run --rm -p 127.0.0.1:3000:3000 moefurina/ncm-api:latest
 ```
 
 ## CLI workflow
+
+The browser app is optional. `plan` and `apply` run the complete migration
+workflow directly from a terminal and do not start the local app UI. Use the
+virtual environment's interpreter explicitly so the commands do not depend on
+shell activation or a generated console-script path:
+
+Linux and macOS:
+
+```bash
+./.venv/bin/python -m cloud_playlist_bridge plan 'https://music.163.com/playlist?id=123456789' --spotify-client-id YOUR_CLIENT_ID
+./.venv/bin/python -m cloud_playlist_bridge apply reports/NAME.plan.json --spotify-client-id YOUR_CLIENT_ID --private
+```
+
+Windows Command Prompt or PowerShell:
+
+```bat
+.venv\Scripts\python.exe -m cloud_playlist_bridge plan "https://music.163.com/playlist?id=123456789" --spotify-client-id YOUR_CLIENT_ID
+.venv\Scripts\python.exe -m cloud_playlist_bridge apply reports\NAME.plan.json --spotify-client-id YOUR_CLIENT_ID --private
+```
+
+The installed `cloud-playlist-bridge` command is a shorter equivalent on all
+three systems. The first Spotify authorization still prints and normally opens
+an OAuth URL in the default browser; this is authentication, not the local app
+UI. The loopback callback must remain registered in the Spotify Developer app.
 
 Create or resume a matching plan:
 
@@ -197,8 +234,8 @@ failure behavior, and acceptance criteria.
 
 ## Status
 
-Version 0.4.0 supports the local app on Linux and macOS, CLI planning and
-application, public NetEase playlists, optional self-hosted `api-enhanced`,
+Version 0.5.0 supports the local app on Linux, Windows, and macOS, CLI planning
+and application, public NetEase playlists, optional self-hosted `api-enhanced`,
 resumable planning and writes, and manual-add reports. Linux is runtime-tested;
-the macOS launcher structure is generated and tested but has not been executed
-on a physical macOS host in this environment.
+the Windows and macOS launcher structures are generated and tested but have not
+been executed on physical hosts for those systems in this environment.

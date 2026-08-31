@@ -34,6 +34,17 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
+## 在 Windows 安装
+
+先安装 Python 3.11 或更高版本，然后在 PowerShell 中运行：
+
+```powershell
+cd 'C:\path\to\CloudMusic_to_Spotify_Migration'
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e .
+```
+
 ## 在 macOS 安装
 
 先安装 Python 3.11 或更高版本，然后在“终端”中运行：
@@ -81,10 +92,12 @@ cloud-playlist-bridge install-launcher
 ```
 
 - Linux 创建 `~/.local/share/applications/cloud-playlist-bridge.desktop`。
+- Windows 在当前用户的“开始菜单\程序”目录创建 `Cloud Playlist Bridge.vbs`，并把
+  状态保存在 `%LOCALAPPDATA%\Cloud Playlist Bridge`。
 - macOS 创建 `~/Applications/Cloud Playlist Bridge.app`。
 
-两个启动器都调用同一个本地 App，并把状态保存在对应平台的用户应用数据目录。移动或
-重建虚拟环境后，需要再次执行 `install-launcher`。两个平台都保留 `app`、`plan` 和
+所有启动器都调用同一个本地 App，并把状态保存在对应平台的用户应用数据目录。移动或
+重建虚拟环境后，需要再次执行 `install-launcher`。所有平台都保留 `app`、`plan` 和
 `apply` 命令作为回退。
 
 ## 网易云来源 API 选择
@@ -108,6 +121,28 @@ docker run --rm -p 127.0.0.1:3000:3000 moefurina/ncm-api:latest
 ```
 
 ## CLI 工作流
+
+浏览器 App 不是必需项。`plan` 和 `apply` 可以直接在终端完成整个迁移流程，不会启动
+本地 App 页面。以下命令显式调用虚拟环境解释器，因此不依赖 shell 激活状态或自动生成
+的命令入口。
+
+Linux 和 macOS：
+
+```bash
+./.venv/bin/python -m cloud_playlist_bridge plan 'https://music.163.com/playlist?id=123456789' --spotify-client-id YOUR_CLIENT_ID
+./.venv/bin/python -m cloud_playlist_bridge apply reports/NAME.plan.json --spotify-client-id YOUR_CLIENT_ID --private
+```
+
+Windows 命令提示符或 PowerShell：
+
+```bat
+.venv\Scripts\python.exe -m cloud_playlist_bridge plan "https://music.163.com/playlist?id=123456789" --spotify-client-id YOUR_CLIENT_ID
+.venv\Scripts\python.exe -m cloud_playlist_bridge apply reports\NAME.plan.json --spotify-client-id YOUR_CLIENT_ID --private
+```
+
+安装后，三个系统都可以用较短的 `cloud-playlist-bridge` 命令代替上述解释器前缀。首次
+Spotify 授权仍会输出 OAuth URL，并通常会在默认浏览器中打开；这是身份验证，不是本地
+App 页面。Spotify Developer 应用中仍须登记 loopback 回调地址。
 
 生成或恢复匹配计划：
 
@@ -175,6 +210,7 @@ python3 -m compileall -q src tests
 
 ## 状态
 
-当前版本为 0.4.0，支持 Linux 和 macOS 本地 App、CLI 规划与执行、网易云公开歌单、
-可选的本机 `api-enhanced`、可恢复规划与写入，以及手动添加报告。Linux 已做运行验证；
-macOS 启动器结构已经生成并测试，但当前环境没有实体 macOS 主机，尚未实际运行验证。
+当前版本为 0.5.0，支持 Linux、Windows 和 macOS 本地 App、CLI 规划与执行、网易云公开
+歌单、可选的本机 `api-enhanced`、可恢复规划与写入，以及手动添加报告。Linux 已做运行
+验证；Windows 和 macOS 启动器结构已经生成并测试，但当前环境没有对应实体主机，尚未
+实际运行验证。

@@ -55,7 +55,7 @@ def build_parser() -> argparse.ArgumentParser:
     app.add_argument("--report-dir", type=Path, default=Path("reports"))
 
     launcher = subparsers.add_parser(
-        "install-launcher", help="安装当前系统的 Linux/macOS 图形启动器"
+        "install-launcher", help="安装当前系统的 Linux/Windows/macOS 图形启动器"
     )
 
     plan = subparsers.add_parser("plan", help="生成或恢复带校验和的迁移计划")

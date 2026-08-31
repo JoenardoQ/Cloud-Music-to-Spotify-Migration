@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import os
+import plistlib
 import tempfile
 import unittest
-import plistlib
 from pathlib import Path
+from unittest.mock import patch
 
 from cloud_playlist_bridge.launchers import install_launcher
 
@@ -24,6 +26,55 @@ class LauncherTests(unittest.TestCase):
                 wrapper.read_text(),
             )
             self.assertTrue(wrapper.stat().st_mode & 0o100)
+
+    def test_windows_start_menu_launcher_uses_local_app_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home = root / "用户 Profile"
+            roaming = root / "Roaming Data"
+            local = root / "Local Data"
+            python = home / "venv" / "Scripts" / "python.exe"
+            result = install_launcher(
+                platform="windows",
+                python=python,
+                home=home,
+                roaming_app_data=roaming,
+                local_app_data=local,
+            )
+            self.assertEqual(result.platform, "windows")
+            self.assertEqual(
+                result.path,
+                roaming
+                / "Microsoft/Windows/Start Menu/Programs/Cloud Playlist Bridge.vbs",
+            )
+            launcher = result.path.read_text(encoding="utf-16")
+            self.assertIn(str(python.resolve()), launcher)
+            self.assertIn(str(local / "Cloud Playlist Bridge" / "state"), launcher)
+            self.assertIn(str(local / "Cloud Playlist Bridge" / "reports"), launcher)
+            self.assertIn("cloud_playlist_bridge", launcher)
+            self.assertIn(f'"""{python.resolve()}""', launcher)
+            self.assertIn(", 0, False", launcher)
+
+    def test_win32_is_detected_as_windows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            roaming = root / "roaming"
+            local = root / "local"
+            with patch("cloud_playlist_bridge.launchers.sys.platform", "win32"), patch.dict(
+                os.environ,
+                {"APPDATA": str(roaming), "LOCALAPPDATA": str(local)},
+            ):
+                result = install_launcher(
+                    python=root / "python.exe",
+                    home=root,
+                )
+            self.assertEqual(result.platform, "windows")
+            self.assertEqual(result.path.suffix, ".vbs")
+            self.assertTrue(result.path.is_relative_to(roaming))
+            self.assertIn(
+                str(local / "Cloud Playlist Bridge"),
+                result.path.read_text("utf-16"),
+            )
 
     def test_macos_app_bundle_uses_application_support(self):
         with tempfile.TemporaryDirectory() as directory:

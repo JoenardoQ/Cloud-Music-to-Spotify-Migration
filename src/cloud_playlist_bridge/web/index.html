@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cloud Playlist Bridge</title>
+    <link rel="stylesheet" href="/app.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div>
+          <p class="eyebrow">LOCAL PLAYLIST MIGRATION</p>
+          <h1>Cloud Playlist Bridge</h1>
+        </div>
+        <div id="phase-pill" class="phase-pill" data-phase="idle">等待开始</div>
+      </header>
+
+      <main>
+        <form id="migration-form" class="control-deck">
+          <label class="field field-source">
+            <span>网易云歌单</span>
+            <input id="playlist" name="playlist" required
+              placeholder="歌单 ID 或 https://music.163.com/playlist?id=...">
+          </label>
+          <label class="field field-client">
+            <span>Spotify Client ID</span>
+            <input id="spotify-client-id" name="spotify_client_id" required
+              autocomplete="off" spellcheck="false" placeholder="Developer Dashboard Client ID">
+          </label>
+          <button id="plan-button" class="button button-primary" type="submit">
+            分析歌单
+          </button>
+          <button id="apply-button" class="button button-accent" type="button" disabled>
+            创建 Spotify 歌单
+          </button>
+
+          <details class="advanced">
+            <summary>高级设置</summary>
+            <div class="advanced-grid">
+              <label class="field">
+                <span>本地 api-enhanced</span>
+                <input id="netease-api" placeholder="http://127.0.0.1:3000">
+              </label>
+              <label class="field small-field">
+                <span>预期歌曲数</span>
+                <input id="expected-count" inputmode="numeric" placeholder="可选">
+              </label>
+              <label class="field small-field">
+                <span>最低评分</span>
+                <input id="threshold" inputmode="decimal" value="0.82">
+              </label>
+              <label class="field small-field">
+                <span>歧义差距</span>
+                <input id="ambiguity-gap" inputmode="decimal" value="0.05">
+              </label>
+              <label class="toggle">
+                <input id="private-playlist" type="checkbox">
+                <span>创建为私有歌单</span>
+              </label>
+            </div>
+          </details>
+        </form>
+
+        <div id="notice" class="notice" hidden></div>
+
+        <section class="migration-stage" aria-label="歌单迁移状态">
+          <article class="playlist-card netease-card">
+            <header class="playlist-header">
+              <div class="service-icon netease-icon" aria-hidden="true">云</div>
+              <div class="playlist-heading">
+                <p>NETEASE CLOUD MUSIC</p>
+                <h2 id="source-name">等待载入歌单</h2>
+              </div>
+              <span id="source-count" class="track-count">0 首</span>
+            </header>
+            <div id="source-list" class="track-viewport" tabindex="0"
+              aria-label="网易云音乐歌曲列表">
+              <div class="virtual-canvas"></div>
+              <div class="empty-state">输入歌单并开始分析</div>
+            </div>
+          </article>
+
+          <aside class="progress-rail" aria-label="迁移进度">
+            <div id="progress-ring" class="progress-ring">
+              <div>
+                <strong id="progress-percent">0%</strong>
+                <span id="progress-fraction">0 / 0</span>
+              </div>
+            </div>
+            <div class="flow-line"><i></i></div>
+            <p id="progress-label">等待输入</p>
+            <div class="stats">
+              <span><b id="matched-count">0</b> 匹配</span>
+              <span><b id="skipped-count">0</b> 跳过</span>
+            </div>
+          </aside>
+
+          <article class="playlist-card spotify-card">
+            <header class="playlist-header">
+              <div class="service-icon spotify-icon" aria-hidden="true">S</div>
+              <div class="playlist-heading">
+                <p>SPOTIFY</p>
+                <h2 id="target-name">匹配结果</h2>
+              </div>
+              <span id="target-count" class="track-count">0 首</span>
+            </header>
+            <div id="target-list" class="track-viewport" tabindex="0"
+              aria-label="Spotify 匹配结果列表">
+              <div class="virtual-canvas"></div>
+              <div class="empty-state">匹配结果将在此出现</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="log-card">
+          <header>
+            <div>
+              <p class="eyebrow">PROCESS LOG</p>
+              <h2>运行日志</h2>
+            </div>
+            <div class="report-actions">
+              <a id="manual-link" class="text-link" href="/api/manual" hidden>下载手动添加名单</a>
+              <a id="spotify-link" class="button button-small" target="_blank"
+                rel="noopener noreferrer" hidden>打开 Spotify 歌单</a>
+            </div>
+          </header>
+          <pre id="log-output" aria-live="polite">[系统] 本地服务已就绪，等待开始。</pre>
+        </section>
+      </main>
+
+      <footer>
+        仅处理歌单元数据 · 歧义歌曲默认跳过 · 服务只监听本机回环地址
+      </footer>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>

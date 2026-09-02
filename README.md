@@ -1,6 +1,6 @@
 # Cloud Playlist Bridge
 
-[简体中文](README.zh-CN.md) · [Beginner guide](BEGINNER_GUIDE.md)
+[简体中文](README.zh-CN.md) · [User guide](USER_GUIDE.md)
 
 Migrate a publicly accessible NetEase Cloud Music playlist to Spotify. The
 program reads playlist metadata locally, searches Spotify, and creates a
@@ -58,7 +58,7 @@ select **Code → Download ZIP**, and extract the archive. Run every command bel
 from the extracted project folder.
 
 If folders, CMD, or terminals are unfamiliar, use the
-[beginner guide](BEGINNER_GUIDE.md).
+[user guide](USER_GUIDE.md).
 
 ## 2. Install Python, the environment, and the app
 
@@ -374,7 +374,7 @@ Changes to the public endpoints may also require a project update.
 - `.state`, `reports`, virtual environments, and build output are excluded by
   the project's `.gitignore`.
 
-## Limitations and verification status
+## Limitations
 
 - Only playlist metadata is migrated, not audio, save times, comments, or
   listening history.
@@ -384,16 +384,6 @@ Changes to the public endpoints may also require a project update.
   recording; manual review remains necessary.
 - Spotify has no batch search endpoint. Large playlists can take a long time and
   may reach rate or development-mode quota limits.
-- Offline tests cover a simulated 10,000-track plan, 100-track write batches,
-  checkpoint recovery, plan checksums, and launcher generation for all three
-  platforms. This is not equivalent to a 10,000-track end-to-end migration on
-  three physical systems with live accounts.
-- Linux has been runtime-tested in the current development environment. Windows
-  and macOS commands, paths, and launcher structures have automated coverage but
-  have not received physical-host end-to-end testing in this environment.
-
-Current project version: `0.5.0`.
-
 ## Developer entry point
 
 Regular users do not need this section. See

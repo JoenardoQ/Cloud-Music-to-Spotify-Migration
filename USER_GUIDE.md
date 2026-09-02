@@ -1,6 +1,6 @@
-# Piglet's Foolproof Guide
+# User Guide
 
-[简体中文](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/小猪专供傻瓜式教学.md)
+[简体中文](USER_GUIDE.zh-CN.md)
 
 This guide is for people who do not know programming, Git, or command-line
 tools. You only need to know how to download a file, copy a command, and open a
@@ -27,8 +27,8 @@ information in your playlist to Spotify.
 2. Your browser downloads a ZIP archive.
 3. Extract it and put the folder somewhere easy to find, such as Downloads or
    Desktop.
-4. This extracted folder is your separate trial area. Complete every later step
-   in this folder. You can download it again if something goes wrong.
+4. Complete every later step in this extracted project folder. You can download
+   a fresh copy if the folder is damaged or accidentally changed.
 
 ## Step 2: Install Python, the environment, and the app
 
@@ -71,8 +71,8 @@ python3 -m venv .venv
 If the computer asks for a password, enter your login password and press Enter.
 It is normal for no characters to appear while you type the password.
 
-`Successfully installed cloud-playlist-bridge-0.5.0` means installation worked.
-A pip upgrade notice is harmless and can be ignored.
+An output line beginning with `Successfully installed cloud-playlist-bridge-`
+means installation worked. A pip upgrade notice is harmless and can be ignored.
 
 ## Step 3: Get a Spotify Client ID
 
@@ -188,5 +188,4 @@ owner-only, or login-required playlists cannot be read by the default method.
 The `.state` folder contains the Spotify login token. The `reports` folder
 contains playlist reports. Do not send these folders to other people or upload
 them to a public repository or cloud drive. If you stop using the tool, preserve
-any reports you need, stop the app, and then delete the entire separate trial
-folder.
+any reports you need, stop the app, and then delete the project folder.

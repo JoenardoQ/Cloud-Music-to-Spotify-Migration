@@ -1,6 +1,6 @@
-# 小猪专供傻瓜式教学
+# 用户指南
 
-[English](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/blob/main/BEGINNER_GUIDE.md)
+[English](USER_GUIDE.md)
 
 这份教程写给不懂编程、Git 和命令行的普通用户。你只需要会下载文件、复制命令和打开
 网页。请从头到尾按顺序操作，不要跳步。
@@ -24,8 +24,8 @@ Premium。这个工具不会下载歌曲，只会把歌单中的歌曲信息匹�
 1. 打开 [项目下载页面](https://github.com/JoenardoQ/Cloud-Music-to-Spotify-Migration/archive/refs/heads/main.zip)。
 2. 浏览器会下载一个 ZIP 压缩包。
 3. 解压 ZIP，并把文件夹放到容易找到的位置，例如“下载”或“桌面”。
-4. 这个解压出来的文件夹就是你的独立试验场。后续操作全部在这里完成，用坏了也可以
-   重新下载。
+4. 后续操作全部在这个解压后的项目文件夹中完成。如果文件夹被误改或损坏，可以重新
+   下载一份。
 
 ## 第二步：用终端安装 Python、环境和应用
 
@@ -67,8 +67,8 @@ python3 -m venv .venv
 
 系统要求输入密码时，输入电脑登录密码并按回车。输入过程中屏幕不显示字符是正常的。
 
-看到 `Successfully installed cloud-playlist-bridge-0.5.0` 就表示安装成功。看到 pip 可以
-升级的提示也没关系，不需要升级。
+看到以 `Successfully installed cloud-playlist-bridge-` 开头的输出就表示安装成功。
+看到 pip 可以升级的提示也没关系，不需要升级。
 
 ## 第三步：准备 Spotify Client ID
 
@@ -173,4 +173,4 @@ Python 没有安装成功。重新执行第二步，安装完成后关闭终端�
 
 项目文件夹中的 `.state` 保存 Spotify 登录令牌，`reports` 保存歌单报告。不要把这两个
 文件夹发给别人，也不要上传到网盘或公开仓库。如果不再使用，先保存需要的报告，关闭
-应用后再删除整个独立试验文件夹。
+应用后再删除项目文件夹。

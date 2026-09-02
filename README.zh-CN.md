@@ -1,6 +1,6 @@
 # Cloud Playlist Bridge
 
-[English](README.md) · [零基础图文式教程](小猪专供傻瓜式教学.md)
+[English](README.md) · [用户指南](USER_GUIDE.zh-CN.md)
 
 把你有权访问的网易云音乐公开歌单迁移到 Spotify。程序在本机读取歌单元数据、搜索
 Spotify 曲库并生成可审查的匹配计划；只有你最后确认后，它才会创建 Spotify 歌单。
@@ -48,7 +48,7 @@ Spotify 开发模式要求应用所有者保持 Premium，并限制授权用户�
 点击 **Code → Download ZIP**，然后解压。后续命令都要在解压后的项目文件夹中运行。
 
 如果你不熟悉文件夹、CMD 或终端，请直接阅读
-[小猪专供傻瓜式教学](小猪专供傻瓜式教学.md)。
+[用户指南](USER_GUIDE.zh-CN.md)。
 
 ## 2. 安装 Python 环境和应用
 
@@ -321,23 +321,16 @@ macOS/Linux 把命令前缀换成 `./.venv/bin/python`，然后打开
 - 本地 App 默认只监听 `127.0.0.1`，并对写请求检查 CSRF token。
 - `.state`、`reports`、虚拟环境和构建产物已由项目的 `.gitignore` 排除。
 
-## 限制与验证状态
+## 限制
 
 - 只迁移歌单元数据，不迁移音频、收藏时间、评论或播放历史。
 - 默认只支持无需登录即可读取的网易云公开歌单。
 - 跨平台元数据匹配无法证明两个条目是同一录音，人工复核仍有必要。
 - Spotify 搜索没有批量接口，大歌单可能耗时较长并触发速率或开发模式配额限制。
-- 离线测试覆盖 10,000 首模拟规划、100 首分批写入、检查点恢复、计划校验和及三端启动
-  器生成；这不等同于在三种实体系统和真实账户上完成 10,000 首端到端迁移。
-- Linux 已在当前开发环境运行验证；Windows 和 macOS 的命令、路径和启动器结构已有
-  自动化测试，但尚未在本项目当前测试环境的实体主机上完成端到端运行验证。
-
-当前项目版本：`0.5.0`。
-
 ## 开发者入口
 
 普通用户不需要本节。架构、数据流、不变量和失败语义见
-[docs/architecture.md](docs/architecture.md)。离线验证命令：
+[docs/architecture.zh-CN.md](docs/architecture.zh-CN.md)。离线验证命令：
 
 ```bash
 PYTHONPATH=src python3 -m unittest discover -s tests -v

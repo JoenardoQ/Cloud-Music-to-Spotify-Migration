@@ -6,3 +6,8 @@ reports/
 dist/
 build/
 *.egg-info/
+
+# Local-only project records and experimental material.
+/experiments/
+/project-history/
+/private/
